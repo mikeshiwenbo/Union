@@ -1,19 +1,19 @@
 
-public class QuickUnion {
+public class BetterQuickUnion {
 //	此算法为到目前为止效率最高的归类算法，它基于QuickFind算法，灵活的将两个类中小类转换为较大的类
-	//此算法通过判断哪一个数组的数量多而简单定义为数组大的那个树高，不太科学
+	//此算法引入rank数组
 	private int[] id;
-	private int[] sz;
+	private int[] rank; //rank[i]表示以i为根的集合所表示的树的层数
 	private int count;
-	public QuickUnion(int N){
+	public BetterQuickUnion(int N){
 		count=N;
 		id=new int[N];
 		for(int i=0;i<N;i++){
 			id[i]=i;
 		}
-		sz=new int[N];
+		rank=new int[N];
 		for(int i=0;i<N;i++){
-			sz[i]=i;
+			rank[i]=i;
 		}
 		
 	}
@@ -33,12 +33,13 @@ public class QuickUnion {
 		if(i==j){
 			return;
 		}
-		if(sz[i]<sz[j]){
-			id[i]=j;
-			sz[j]+=sz[i];
-		}else{
+		if(rank[i]<rank[j]){
+			id[i]=j;  //此时不需要维护，因为i的层数小于j的层数，至少小于1，加上i的层数后，不会使j的层数改变
+		}else if(rank[i]>rank[j]){
 			id[j]=i;
-			sz[i]+=sz[j];
+		}else{
+			id[i]=j;  //此时i指向了j，因此使j的层数加一
+			rank[j]+=1;
 		}
 		count--;
 	}
